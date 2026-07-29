@@ -2,57 +2,57 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// ---------- MIDDLEWARE ----------
-// 1. Allows Express to parse JSON data sent in the request body (for POST)
+// Middleware
 app.use(express.json());
-
-// 2. Serves your static HTML/CSS/JS files from the 'public' folder
 app.use(express.static('public'));
 
-// ---------- IN-MEMORY DATABASE (Array) ----------
-// This will hold our blog posts for now (resets when server restarts)
+// In-memory storage
 let blogs = [];
 
-// ---------- ROUTES ----------
-
-// 1. GET route: Fetch all blogs
+// GET route - fetch all blogs
 app.get('/api/blogs', (req, res) => {
-    res.json(blogs); // Send the entire array as JSON
+    res.json(blogs);
 });
 
-// 2. POST route: Add a new blog
+// POST route - add a new blog
 app.post('/api/blogs', (req, res) => {
-    // Extract title and content from the request body
     const { title, content } = req.body;
-
-    // Validation: Check if fields are missing
     if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required.' });
     }
-
-    // Create a new blog object with a unique ID (using timestamp)
     const newBlog = {
         id: Date.now().toString(),
-        title: title,
-        content: content,
+        title,
+        content,
         createdAt: new Date().toISOString()
     };
-
-    // Push it into our "database" (array)
     blogs.push(newBlog);
-
-    // Send back the created blog with a 201 (Created) status
     res.status(201).json(newBlog);
 });
 
-// 3. (BONUS) Root route to show a message - keep this so the browser works
 app.get('/', (req, res) => {
     res.send('Hello World from Express! API is running at /api/blogs');
 });
+// PUT route - Update an existing blog
+app.put('/api/blogs/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
 
-// ---------- START THE SERVER ----------
+    // Find the blog by its ID
+    const blog = blogs.find(b => b.id === id);
+
+    // If blog not found, return 404
+    if (!blog) {
+        return res.status(404).json({ error: 'Blog not found' });
+    }
+
+    // Update the fields if they are provided
+    if (title) blog.title = title;
+    if (content) blog.content = content;
+
+    // Send back the updated blog
+    res.json(blog);
+});
 app.listen(port, () => {
     console.log(`✅ Server running at http://localhost:${port}`);
-    console.log(`📝 Test GET:  http://localhost:${port}/api/blogs`);
-    console.log(`📝 Test POST: http://localhost:${port}/api/blogs (Use Postman)`);
 });
