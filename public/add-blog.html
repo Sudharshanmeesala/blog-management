@@ -1,38 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Blog</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Blog - Blog Management</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- ===== NAVIGATION BAR ===== -->
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="add-blog.html">➕ Add Blog</a>
-  </nav>
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+        <div class="container">
+            <div class="logo">Blog<span>Hub</span></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="add-blog.html" class="active">+ Add Blog</a>
+            </div>
+        </div>
+    </nav>
 
-  <!-- ===== MAIN CONTENT ===== -->
-  <main>
-    <h1>Add a New Blog Post</h1>
-    <form id="blog-form">
-      <div>
-        <label for="title">Title:</label>
-        <input type="text" id="title" placeholder="Enter blog title" required />
-      </div>
-      <div>
-        <label for="content">Content:</label>
-        <textarea id="content" rows="6" placeholder="Write your blog content..." required></textarea>
-      </div>
-      <button type="submit">Publish Blog</button>
-    </form>
-  </main>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="container">
+        <h1 class="page-title">✍️ Create New Post</h1>
+        <p class="subtitle">Share your ideas with the world. Fill in the details below.</p>
 
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    <p>&copy; 2026 Blog Management System. All rights reserved.</p>
-  </footer>
+        <div class="form-card">
+            <form id="blog-form">
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="title">📌 Blog Title</label>
+                    <input type="text" id="title" placeholder="e.g. My First Blog Post" required />
+                </div>
+
+                <!-- Content -->
+                <div class="form-group">
+                    <label for="content">📝 Content</label>
+                    <textarea id="content" placeholder="Write your amazing content here..." required></textarea>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-primary">🚀 Publish Blog</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 BlogHub. Built with ❤️ for the Codomax Internship.</p>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>

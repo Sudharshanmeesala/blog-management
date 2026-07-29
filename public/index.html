@@ -1,33 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home - Blog Management</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- ===== NAVIGATION BAR ===== -->
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="add-blog.html">➕ Add Blog</a>
-  </nav>
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+        <div class="container">
+            <div class="logo">Blog<span>Hub</span></div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="add-blog.html">+ Add Blog</a>
+            </div>
+        </div>
+    </nav>
 
-  <!-- ===== MAIN CONTENT ===== -->
-  <main>
-    <h1>All Blog Posts</h1>
-    <p>Welcome to your blog management system.</p>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="container">
+        <h1 class="page-title">📖 All Blog Posts</h1>
+        <p class="subtitle">Explore the latest thoughts and ideas from our community.</p>
 
-    <!-- Placeholder for blog list (will be rendered by JS later) -->
-    <div id="blog-list">
-      <p><em>No blogs yet. Add one using the "Add Blog" page!</em></p>
-    </div>
-  </main>
+        <!-- Blog Grid -->
+        <div class="blog-grid" id="blog-list">
+            
+            <!-- Sample Card 1 (Static preview for now) -->
+            <div class="blog-card">
+                <h2>Getting Started with Full Stack Development</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...</p>
+                <div class="blog-meta">
+                    <span>📅 Jan 15, 2026</span>
+                    <span class="tag">Technology</span>
+                </div>
+            </div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    <p>&copy; 2026 Blog Management System. All rights reserved.</p>
-  </footer>
+            <!-- Sample Card 2 (Static preview for now) -->
+            <div class="blog-card">
+                <h2>Mastering CSS Flexbox and Grid</h2>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+                <div class="blog-meta">
+                    <span>📅 Jan 12, 2026</span>
+                    <span class="tag">CSS</span>
+                </div>
+            </div>
+
+            <!-- Sample Card 3 (Static preview for now) -->
+            <div class="blog-card">
+                <h2>Why REST APIs are Everywhere</h2>
+                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo.</p>
+                <div class="blog-meta">
+                    <span>📅 Jan 10, 2026</span>
+                    <span class="tag">Backend</span>
+                </div>
+            </div>
+
+            <!-- We will replace these static cards with dynamic JavaScript on Day 7/10 -->
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 BlogHub. Built with ❤️ for the Codomax Internship.</p>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
