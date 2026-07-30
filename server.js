@@ -1,16 +1,29 @@
 const express = require('express');
+const path = require('path');
+const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000; // IMPORTANT for Render
+const port = process.env.PORT || 3000;
+const publicDir = path.join(__dirname, 'public');
+
+// ✅ CORS for GitHub Pages and Render
+app.use(cors({
+    origin: ['https://sudharshanmeesala.github.io', 'https://blog-management-duid.onrender.com', 'http://localhost:3000']
+}));
+
+// ✅ Serve static files from the public folder using an absolute path
+app.use(express.static(publicDir));
 
 app.use(express.json());
-app.use(express.static('.'));
 
+// In-memory storage
 let blogs = [];
 
+// GET - Fetch all blogs
 app.get('/api/blogs', (req, res) => {
     res.json(blogs);
 });
 
+// POST - Add a new blog
 app.post('/api/blogs', (req, res) => {
     const { title, content } = req.body;
     if (!title || !content) {
@@ -26,6 +39,7 @@ app.post('/api/blogs', (req, res) => {
     res.status(201).json(newBlog);
 });
 
+// PUT - Update a blog
 app.put('/api/blogs/:id', (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
@@ -38,6 +52,7 @@ app.put('/api/blogs/:id', (req, res) => {
     res.json(blog);
 });
 
+// DELETE - Remove a blog
 app.delete('/api/blogs/:id', (req, res) => {
     const { id } = req.params;
     const index = blogs.findIndex(b => b.id === id);
@@ -48,6 +63,23 @@ app.delete('/api/blogs/:id', (req, res) => {
     res.status(204).send();
 });
 
+// ✅ Serve the homepage explicitly
+app.get('/', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+app.get('/add-blog', (req, res) => {
+    res.sendFile(path.join(publicDir, 'add-blog.html'));
+});
+
+// ✅ Catch-all route for client-side routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+// Start server
 app.listen(port, () => {
     console.log(`✅ Server running on port ${port}`);
+    console.log(`🌐 http://localhost:${port}`);
+    console.log(`📡 http://localhost:${port}/api/blogs`);
 });
