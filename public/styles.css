@@ -318,13 +318,6 @@ form:hover {
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
 }
 
-form h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a2e;
-}
-
 input,
 textarea {
     font-family: 'Inter', sans-serif;
@@ -455,15 +448,6 @@ footer span {
     color: #f5576c;
 }
 
-footer a {
-    color: #667eea;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
 /* ============================================
    LOADING SPINNER
    ============================================ */
@@ -502,6 +486,40 @@ footer a:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #764ba2, #667eea);
+}
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+    font-weight: 500;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.success {
+    border-left: 4px solid #4facfe;
+}
+
+.toast.error {
+    border-left: 4px solid #f5576c;
 }
 
 /* ============================================
@@ -578,37 +596,4 @@ footer a:hover {
         padding: 0.6rem 1.2rem;
         font-size: 0.85rem;
     }
-}
-
-/* ============================================
-   TOAST NOTIFICATION (Optional)
-   ============================================ */
-.toast {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 1rem 2rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 9999;
-}
-
-.toast.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.toast.success {
-    border-left: 4px solid #4facfe;
-}
-
-.toast.error {
-    border-left: 4px solid #f5576c;
 }

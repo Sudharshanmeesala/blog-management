@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Blog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <span>📝</span> BlogHub
+        </div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="add-blog.html" class="active">✏️ Write</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>✍️ Create a Story</h1>
+        <form id="blog-form">
+            <input type="text" id="title" placeholder="📌 Enter your title..." required>
+            <textarea id="content" placeholder="📝 Write your story here..." required></textarea>
+            <div id="error-message"></div>
+            <button type="submit">🚀 Publish Story</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 <span>❤️</span> BlogHub | Built with passion by <a href="#" target="_blank">Sudharshan</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

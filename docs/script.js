@@ -1,4 +1,9 @@
 // ============================================
+// YOUR RENDER BACKEND URL - UPDATE THIS!
+// ============================================
+const API_URL = 'https://blog-management-duid.onrender.com';
+
+// ============================================
 // TOAST NOTIFICATION SYSTEM
 // ============================================
 function showToast(message, type = 'success') {
@@ -35,14 +40,16 @@ async function fetchAndDisplayBlogs() {
             </div>
         `;
 
-        // ✅ CORRECT RENDER URL
-        const response = await fetch('https://blog-management-duid.onrender.com/api/blogs');
+        console.log('📡 Fetching blogs from:', `${API_URL}/api/blogs`); // ✅ DEBUG
+        
+        const response = await fetch(`${API_URL}/api/blogs`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const blogs = await response.json();
+        console.log('✅ Blogs loaded:', blogs); // ✅ DEBUG
 
         if (blogs.length === 0) {
             container.innerHTML = `
@@ -80,7 +87,7 @@ async function fetchAndDisplayBlogs() {
         container.innerHTML = html;
 
     } catch (error) {
-        console.error('Error fetching blogs:', error);
+        console.error('❌ Error fetching blogs:', error);
         container.innerHTML = `
             <div style="text-align: center; padding: 3rem; background: rgba(255,255,255,0.7); border-radius: 20px;">
                 <p style="color: #f5576c; font-size: 1.2rem;">❌ Oops! Something went wrong</p>
@@ -185,15 +192,19 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = true;
 
         try {
-            // ✅ CORRECT RENDER URL
-            const response = await fetch('https://blog-management-duid.onrender.com/api/blogs', {
+            console.log('📤 Sending POST to:', `${API_URL}/api/blogs`); // ✅ DEBUG
+            
+            const response = await fetch(`${API_URL}/api/blogs`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, content })
             });
 
+            console.log('📥 Response status:', response.status); // ✅ DEBUG
+
             if (response.ok) {
                 const newBlog = await response.json();
+                console.log('✅ Blog created:', newBlog); // ✅ DEBUG
                 showSuccess('✅ Blog published successfully!');
                 titleInput.classList.add('success');
                 contentInput.classList.add('success');
@@ -211,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            console.error('Fetch error:', error);
+            console.error('❌ Fetch error:', error);
             showError('❌ Network error: Could not connect to the server.');
             submitButton.innerHTML = '🚀 Publish Story';
             submitButton.disabled = false;
@@ -224,9 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 document.addEventListener('click', async function(e) {
     
-    // EDIT BUTTON
+    // ---------- EDIT BUTTON ----------
     if (e.target.classList.contains('edit-btn')) {
         const id = e.target.dataset.id;
+        
+        console.log('🔍 Editing blog with ID:', id); // ✅ DEBUG
         
         const card = e.target.closest('.blog-card');
         const titleElement = card.querySelector('h2');
@@ -235,11 +248,19 @@ document.addEventListener('click', async function(e) {
         const currentTitle = titleElement.textContent.trim();
         const currentContent = contentElement.textContent.trim();
 
+        console.log('📝 Current values:', { currentTitle, currentContent }); // ✅ DEBUG
+
         const newTitle = prompt('✏️ Edit Title:', currentTitle);
-        if (newTitle === null) return;
+        if (newTitle === null) {
+            console.log('❌ User cancelled edit'); // ✅ DEBUG
+            return;
+        }
 
         const newContent = prompt('✏️ Edit Content:', currentContent);
-        if (newContent === null) return;
+        if (newContent === null) {
+            console.log('❌ User cancelled edit'); // ✅ DEBUG
+            return;
+        }
 
         if (newTitle.trim() === '' || newContent.trim() === '') {
             showToast('❌ Title and content cannot be empty!', 'error');
@@ -252,25 +273,35 @@ document.addEventListener('click', async function(e) {
         editButton.disabled = true;
 
         try {
-            // ✅ CORRECT RENDER URL
-            const response = await fetch(`https://blog-management-duid.onrender.com/api/blogs/${id}`, {
+            const url = `${API_URL}/api/blogs/${id}`;
+            const data = { 
+                title: newTitle.trim(), 
+                content: newContent.trim() 
+            };
+            
+            console.log('📤 Sending PUT to:', url); // ✅ DEBUG
+            console.log('📤 Data:', data); // ✅ DEBUG
+
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    title: newTitle.trim(), 
-                    content: newContent.trim() 
-                })
+                body: JSON.stringify(data)
             });
 
+            console.log('📥 Response status:', response.status); // ✅ DEBUG
+
             if (response.ok) {
+                const updatedBlog = await response.json();
+                console.log('✅ Blog updated:', updatedBlog); // ✅ DEBUG
                 showToast('✅ Blog updated successfully!', 'success');
                 fetchAndDisplayBlogs();
             } else {
                 const errorData = await response.json();
+                console.error('❌ Server error:', errorData); // ✅ DEBUG
                 showToast('❌ ' + (errorData.error || 'Failed to update'), 'error');
             }
         } catch (error) {
-            console.error('Error updating blog:', error);
+            console.error('❌ Network error:', error); // ✅ DEBUG
             showToast('❌ Network error: Could not update the blog.', 'error');
         } finally {
             editButton.innerHTML = originalText;
@@ -278,9 +309,11 @@ document.addEventListener('click', async function(e) {
         }
     }
 
-    // DELETE BUTTON
+    // ---------- DELETE BUTTON ----------
     if (e.target.classList.contains('delete-btn')) {
         const id = e.target.dataset.id;
+        
+        console.log('🗑️ Deleting blog with ID:', id); // ✅ DEBUG
         
         const card = e.target.closest('.blog-card');
         const titleElement = card.querySelector('h2');
@@ -289,6 +322,7 @@ document.addEventListener('click', async function(e) {
         const confirmDelete = confirm(`⚠️ Are you sure you want to delete "${blogTitle}"?\n\nThis action cannot be undone!`);
 
         if (!confirmDelete) {
+            console.log('❌ User cancelled delete'); // ✅ DEBUG
             return;
         }
 
@@ -298,12 +332,17 @@ document.addEventListener('click', async function(e) {
         deleteButton.disabled = true;
 
         try {
-            // ✅ CORRECT RENDER URL
-            const response = await fetch(`https://blog-management-duid.onrender.com/api/blogs/${id}`, {
+            const url = `${API_URL}/api/blogs/${id}`;
+            console.log('📤 Sending DELETE to:', url); // ✅ DEBUG
+
+            const response = await fetch(url, {
                 method: 'DELETE'
             });
 
+            console.log('📥 Response status:', response.status); // ✅ DEBUG
+
             if (response.ok) {
+                console.log('✅ Blog deleted'); // ✅ DEBUG
                 showToast('✅ Blog deleted successfully!', 'success');
                 fetchAndDisplayBlogs();
             } else if (response.status === 404) {
@@ -312,7 +351,7 @@ document.addEventListener('click', async function(e) {
                 showToast('❌ Failed to delete the blog. Please try again.', 'error');
             }
         } catch (error) {
-            console.error('Error deleting blog:', error);
+            console.error('❌ Network error:', error);
             showToast('❌ Network error: Could not delete the blog.', 'error');
         } finally {
             deleteButton.innerHTML = originalText;
