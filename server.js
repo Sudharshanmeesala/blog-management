@@ -1,20 +1,16 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // IMPORTANT for Render
 
-// Middleware
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('.'));
 
-// In-memory storage
 let blogs = [];
 
-// GET route - fetch all blogs
 app.get('/api/blogs', (req, res) => {
     res.json(blogs);
 });
 
-// POST route - add a new blog
 app.post('/api/blogs', (req, res) => {
     const { title, content } = req.body;
     if (!title || !content) {
@@ -30,29 +26,28 @@ app.post('/api/blogs', (req, res) => {
     res.status(201).json(newBlog);
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World from Express! API is running at /api/blogs');
-});
-// PUT route - Update an existing blog
 app.put('/api/blogs/:id', (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
-
-    // Find the blog by its ID
     const blog = blogs.find(b => b.id === id);
-
-    // If blog not found, return 404
     if (!blog) {
         return res.status(404).json({ error: 'Blog not found' });
     }
-
-    // Update the fields if they are provided
     if (title) blog.title = title;
     if (content) blog.content = content;
-
-    // Send back the updated blog
     res.json(blog);
 });
+
+app.delete('/api/blogs/:id', (req, res) => {
+    const { id } = req.params;
+    const index = blogs.findIndex(b => b.id === id);
+    if (index === -1) {
+        return res.status(404).json({ error: 'Blog not found' });
+    }
+    blogs.splice(index, 1);
+    res.status(204).send();
+});
+
 app.listen(port, () => {
-    console.log(`✅ Server running at http://localhost:${port}`);
+    console.log(`✅ Server running on port ${port}`);
 });
