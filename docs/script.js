@@ -35,7 +35,7 @@ async function fetchAndDisplayBlogs() {
             </div>
         `;
 
-        // ✅ USING RENDER URL
+        // ✅ CORRECT RENDER URL
         const response = await fetch('https://blog-management-duid.onrender.com/api/blogs');
         
         if (!response.ok) {
@@ -84,7 +84,7 @@ async function fetchAndDisplayBlogs() {
         container.innerHTML = `
             <div style="text-align: center; padding: 3rem; background: rgba(255,255,255,0.7); border-radius: 20px;">
                 <p style="color: #f5576c; font-size: 1.2rem;">❌ Oops! Something went wrong</p>
-                <p style="color: #666; margin-top: 0.5rem;">Make sure the server is running</p>
+                <p style="color: #666; margin-top: 0.5rem;">Error: ${error.message}</p>
                 <button onclick="fetchAndDisplayBlogs()" style="margin-top: 1rem;">🔄 Try Again</button>
             </div>
         `;
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = true;
 
         try {
-            // ✅ USING RENDER URL
+            // ✅ CORRECT RENDER URL
             const response = await fetch('https://blog-management-duid.onrender.com/api/blogs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -252,7 +252,7 @@ document.addEventListener('click', async function(e) {
         editButton.disabled = true;
 
         try {
-            // ✅ USING RENDER URL
+            // ✅ CORRECT RENDER URL
             const response = await fetch(`https://blog-management-duid.onrender.com/api/blogs/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -298,7 +298,7 @@ document.addEventListener('click', async function(e) {
         deleteButton.disabled = true;
 
         try {
-            // ✅ USING RENDER URL
+            // ✅ CORRECT RENDER URL
             const response = await fetch(`https://blog-management-duid.onrender.com/api/blogs/${id}`, {
                 method: 'DELETE'
             });
