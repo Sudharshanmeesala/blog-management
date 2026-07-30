@@ -1,21 +1,55 @@
 // ============================================
-// 1. FUNCTION TO FETCH AND DISPLAY BLOGS
+// TOAST NOTIFICATION SYSTEM
+// ============================================
+function showToast(message, type = 'success') {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+// ============================================
+// FUNCTION TO FETCH AND DISPLAY BLOGS
 // ============================================
 async function fetchAndDisplayBlogs() {
     const container = document.getElementById('blog-list');
     if (!container) return;
 
     try {
-        container.innerHTML = '<p>⏳ Loading blogs...</p>';
+        container.innerHTML = `
+            <div style="text-align: center; padding: 3rem;">
+                <div class="spinner" style="width: 40px; height: 40px; border-width: 4px; margin: 0 auto;"></div>
+                <p style="margin-top: 1rem; color: #666;">Loading amazing stories...</p>
+            </div>
+        `;
 
         const response = await fetch('/api/blogs');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const blogs = await response.json();
 
         if (blogs.length === 0) {
             container.innerHTML = `
-                <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px;">
-                    <p style="font-size: 1.2rem;">📭 No blogs yet.</p>
-                    <p>Click <a href="add-blog.html" style="color: #1abc9c;">Add Blog</a> to create your first post!</p>
+                <div class="empty-state">
+                    <span class="icon">📝</span>
+                    <h2>No stories yet</h2>
+                    <p>Be the first to share your thoughts with the world!</p>
+                    <a href="add-blog.html">✏️ Write a Story</a>
                 </div>
             `;
             return;
@@ -27,14 +61,14 @@ async function fetchAndDisplayBlogs() {
                 <div class="blog-card" data-id="${blog.id}">
                     <h2>${escapeHtml(blog.title)}</h2>
                     <p>${escapeHtml(blog.content)}</p>
-                    <small>📅 Posted on ${new Date(blog.createdAt).toLocaleDateString('en-IN', { 
+                    <small>📅 ${new Date(blog.createdAt).toLocaleDateString('en-IN', { 
                         year: 'numeric', 
                         month: 'long', 
                         day: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
                     })}</small>
-                    <div style="margin-top: 1rem;">
+                    <div class="actions">
                         <button class="edit-btn" data-id="${blog.id}">✏️ Edit</button>
                         <button class="delete-btn" data-id="${blog.id}">🗑️ Delete</button>
                     </div>
@@ -47,13 +81,17 @@ async function fetchAndDisplayBlogs() {
     } catch (error) {
         console.error('Error fetching blogs:', error);
         container.innerHTML = `
-            <p style="color: red;">❌ Failed to load blogs. Make sure the server is running.</p>
+            <div style="text-align: center; padding: 3rem; background: rgba(255,255,255,0.7); border-radius: 20px;">
+                <p style="color: #f5576c; font-size: 1.2rem;">❌ Oops! Something went wrong</p>
+                <p style="color: #666; margin-top: 0.5rem;">Make sure the server is running at <code>http://localhost:3000</code></p>
+                <button onclick="fetchAndDisplayBlogs()" style="margin-top: 1rem;">🔄 Try Again</button>
+            </div>
         `;
     }
 }
 
 // ============================================
-// 2. HELPER FUNCTION TO PREVENT XSS ATTACKS
+// HELPER FUNCTION TO PREVENT XSS ATTACKS
 // ============================================
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -62,7 +100,7 @@ function escapeHtml(text) {
 }
 
 // ============================================
-// 3. FORM VALIDATION & SUBMISSION (Day 6)
+// FORM VALIDATION & SUBMISSION
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -71,23 +109,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const form = document.getElementById('blog-form');
+    if (!form) return;
+
     const titleInput = document.getElementById('title');
     const contentInput = document.getElementById('content');
     const errorDiv = document.getElementById('error-message');
 
-    if (!form) return;
-
     function showError(message) {
         errorDiv.textContent = message;
-        errorDiv.style.color = 'red';
+        errorDiv.style.color = '#f5576c';
     }
 
-    function clearError() {
+    function showSuccess(message) {
+        errorDiv.textContent = message;
+        errorDiv.style.color = '#4facfe';
+    }
+
+    function clearMessage() {
         errorDiv.textContent = '';
     }
 
-    if (titleInput) titleInput.addEventListener('input', clearError);
-    if (contentInput) contentInput.addEventListener('input', clearError);
+    if (titleInput) {
+        titleInput.addEventListener('input', function() {
+            clearMessage();
+            if (this.value.trim().length < 3 && this.value.length > 0) {
+                this.classList.add('error');
+                this.classList.remove('success');
+            } else if (this.value.trim().length >= 3) {
+                this.classList.remove('error');
+                this.classList.add('success');
+            } else {
+                this.classList.remove('error', 'success');
+            }
+        });
+    }
+    
+    if (contentInput) {
+        contentInput.addEventListener('input', function() {
+            clearMessage();
+            if (this.value.trim().length < 10 && this.value.length > 0) {
+                this.classList.add('error');
+                this.classList.remove('success');
+            } else if (this.value.trim().length >= 10) {
+                this.classList.remove('error');
+                this.classList.add('success');
+            } else {
+                this.classList.remove('error', 'success');
+            }
+        });
+    }
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -108,7 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        clearError();
+        clearMessage();
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.innerHTML = '<span class="spinner"></span> Publishing...';
+        submitButton.disabled = true;
 
         try {
             const response = await fetch('/api/blogs', {
@@ -119,34 +192,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const newBlog = await response.json();
-                errorDiv.style.color = 'green';
-                errorDiv.textContent = '✅ Blog added successfully! Redirecting...';
-                titleInput.style.border = '2px solid green';
-                contentInput.style.border = '2px solid green';
+                showSuccess('✅ Blog published successfully!');
+                titleInput.classList.add('success');
+                contentInput.classList.add('success');
                 form.reset();
 
                 setTimeout(() => {
                     window.location.href = 'index.html';
-                }, 2000);
+                }, 1500);
 
             } else {
                 const errorData = await response.json();
-                showError('❌ Server error: ' + errorData.error);
+                showError('❌ ' + (errorData.error || 'Failed to publish'));
+                submitButton.innerHTML = '🚀 Publish Story';
+                submitButton.disabled = false;
             }
 
         } catch (error) {
-            showError('❌ Network error: Could not connect to the server.');
             console.error('Fetch error:', error);
+            showError('❌ Network error: Could not connect to the server.');
+            submitButton.innerHTML = '🚀 Publish Story';
+            submitButton.disabled = false;
         }
     });
 });
 
 // ============================================
-// 4. EDIT & DELETE BUTTON HANDLERS (Day 8 & 9)
+// EDIT & DELETE BUTTON HANDLERS
 // ============================================
 document.addEventListener('click', async function(e) {
     
-    // ---------- EDIT BUTTON (Day 8) ----------
+    // EDIT BUTTON
     if (e.target.classList.contains('edit-btn')) {
         const id = e.target.dataset.id;
         
@@ -164,9 +240,14 @@ document.addEventListener('click', async function(e) {
         if (newContent === null) return;
 
         if (newTitle.trim() === '' || newContent.trim() === '') {
-            alert('❌ Title and content cannot be empty!');
+            showToast('❌ Title and content cannot be empty!', 'error');
             return;
         }
+
+        const editButton = e.target;
+        const originalText = editButton.textContent;
+        editButton.innerHTML = '<span class="spinner"></span> Updating...';
+        editButton.disabled = true;
 
         try {
             const response = await fetch(`/api/blogs/${id}`, {
@@ -179,21 +260,68 @@ document.addEventListener('click', async function(e) {
             });
 
             if (response.ok) {
-                const updatedBlog = await response.json();
-                alert('✅ Blog updated successfully!');
+                showToast('✅ Blog updated successfully!', 'success');
                 fetchAndDisplayBlogs();
             } else {
                 const errorData = await response.json();
-                alert('❌ Error: ' + errorData.error);
+                showToast('❌ ' + (errorData.error || 'Failed to update'), 'error');
             }
         } catch (error) {
             console.error('Error updating blog:', error);
-            alert('❌ Network error: Could not update the blog.');
+            showToast('❌ Network error: Could not update the blog.', 'error');
+        } finally {
+            editButton.innerHTML = originalText;
+            editButton.disabled = false;
         }
     }
 
-    // ---------- DELETE BUTTON (Day 9 - Placeholder) ----------
+    // DELETE BUTTON
     if (e.target.classList.contains('delete-btn')) {
-        alert('🗑️ Delete feature will be added on Day 9!');
+        const id = e.target.dataset.id;
+        
+        const card = e.target.closest('.blog-card');
+        const titleElement = card.querySelector('h2');
+        const blogTitle = titleElement.textContent.trim();
+
+        const confirmDelete = confirm(`⚠️ Are you sure you want to delete "${blogTitle}"?\n\nThis action cannot be undone!`);
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        const deleteButton = e.target;
+        const originalText = deleteButton.textContent;
+        deleteButton.innerHTML = '<span class="spinner"></span> Deleting...';
+        deleteButton.disabled = true;
+
+        try {
+            const response = await fetch(`/api/blogs/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                showToast('✅ Blog deleted successfully!', 'success');
+                fetchAndDisplayBlogs();
+            } else if (response.status === 404) {
+                showToast('❌ Blog not found. It may have already been deleted.', 'error');
+            } else {
+                showToast('❌ Failed to delete the blog. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting blog:', error);
+            showToast('❌ Network error: Could not delete the blog.', 'error');
+        } finally {
+            deleteButton.innerHTML = originalText;
+            deleteButton.disabled = false;
+        }
     }
 });
+
+// ============================================
+// AUTO-REFRESH BLOGS EVERY 30 SECONDS
+// ============================================
+if (document.getElementById('blog-list')) {
+    setInterval(() => {
+        fetchAndDisplayBlogs();
+    }, 30000);
+}
