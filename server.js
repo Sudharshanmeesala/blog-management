@@ -78,8 +78,17 @@ app.get('*', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`✅ Server running on port ${port}`);
     console.log(`🌐 http://localhost:${port}`);
     console.log(`📡 http://localhost:${port}/api/blogs`);
+});
+
+server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`⚠️ Port ${port} is already in use. Please stop the other process or use a different port.`);
+    } else {
+        console.error('❌ Server error:', error);
+    }
+    process.exit(1);
 });
